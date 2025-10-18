@@ -27,7 +27,7 @@ def get_inner_reps(model, prompt):
 
     with TraceDict(model, MLP_act + MLP_up_proj + ATT_act) as ret:
         with torch.no_grad():
-            outputs = model(prompt, output_hidden_states=True, output_attentions=True)
+            outputs = model(prompt, output_hidden_states=True)
     
     MLP_act_values = [ret[act].output for act in MLP_act]
     up_proj_values = [ret[proj].output for proj in MLP_up_proj]
