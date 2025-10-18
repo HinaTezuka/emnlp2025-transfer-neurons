@@ -51,7 +51,6 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
         token_len = inputs.input_ids.size(1)
         last_token_idx = token_len - 1
 
-        # Score calculation based on type (L2 distance or cosine similarity)
         for layer_idx, neurons in candidate_neurons.items():
             c = centroids[layer_idx].reshape(1, -1) # centroid of the i-th layer.
             # (i-1)-th layer hidden_state.
@@ -61,7 +60,7 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
             # i-th layer activation values (act_fn(x) * up_proj(x))
             act_fn = MLP_act_values[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
             up_proj = up_proj_values[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
-            acts = act_fn * up_proj # MLP activations.
+            acts = act_fn * up_proj
 
             # layer score at i-th layer.
             layer_score = (ht_pre + atts).reshape(1, -1) # H^l-1 + Att^l.
@@ -107,7 +106,7 @@ def save_as_pickle(file_path: str, target_dict) -> None:
         with open(temp_path, 'wb') as f:
             pickle.dump(target_dict, f)
         os.replace(temp_path, file_path)
-        print('pkl_file successfully saved.')
+        print('Pickle file successfully saved.')
     except Exception as e:
         if os.path.exists(temp_path):
             os.remove(temp_path)
