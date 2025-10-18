@@ -51,7 +51,7 @@ if __name__ == '__main__':
     # unfreeze centroids.
     centroids = unfreeze_pickle(centroids_path)
     # monolingual(L2) sentences for detection.
-    sentences = unfreeze_pickle(sentence_path)
+    sentences = unfreeze_pickle(sentence_path) # must be: [sentence1, sentence2, ...].
 
     # run detection.
     scores = compute_scores_for_tn_detection(model, tokenizer, device, sentences, candidates, centroids, score_type)
