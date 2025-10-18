@@ -31,7 +31,7 @@ if __name__ == '__main__':
     centroids_path = args.centroids_path
     sentence_path = args.sentence_path
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model = AutoModelForCausalLM.from_pretrained(model_id).to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_id)
 
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     top_transfer_neurons = neuron_ranking[:top_n]
 
     # save as pkl.
-    sorted_neurons_path = f"data/tn/{L2}_{tn_type}_top{top_n}.pkl"
-    score_dict_path = f"data/tn/{L2}_{tn_type}_score_dict.pkl"
+    sorted_neurons_path = f'data/tn/{L2}_{tn_type}_top{top_n}.pkl'
+    score_dict_path = f'data/tn/{L2}_{tn_type}_score_dict.pkl'
     save_as_pickle(sorted_neurons_path, top_transfer_neurons)
     save_as_pickle(score_dict_path, score_dict)

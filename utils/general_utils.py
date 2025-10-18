@@ -101,13 +101,13 @@ def sort_neurons_by_score(final_scores):
 
 def save_as_pickle(file_path: str, target_dict) -> None:
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    temp_path = file_path + ".tmp"
+    temp_path = file_path + '.tmp'
 
     try:
-        with open(temp_path, "wb") as f:
+        with open(temp_path, 'wb') as f:
             pickle.dump(target_dict, f)
         os.replace(temp_path, file_path)
-        print("pkl_file successfully saved.")
+        print('pkl_file successfully saved.')
     except Exception as e:
         if os.path.exists(temp_path):
             os.remove(temp_path)
@@ -115,27 +115,27 @@ def save_as_pickle(file_path: str, target_dict) -> None:
 
 def unfreeze_pickle(file_path: str):
     if not os.path.exists(file_path):
-        raise FileNotFoundError(f"Pickle file not found: {file_path}")
+        raise FileNotFoundError(f'Pickle file not found: {file_path}')
 
     try:
-        with open(file_path, "rb") as f:
+        with open(file_path, 'rb') as f:
             return pickle.load(f)
     except (pickle.UnpicklingError, EOFError) as e:
-        raise ValueError(f"Error unpickling file {file_path}: {e}")
+        raise ValueError(f'Error unpickling file {file_path}: {e}')
 
 def save_np_arrays(save_path, np_array):
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     
     try:
         np.savez(save_path, data=np_array)
-        print(f"Array successfully saved to {save_path}")
+        print(f'Array successfully saved to {save_path}')
     except Exception as e:
-        print(f"Failed to save array: {e}")
+        print(f'Failed to save array: {e}')
 
 def unfreeze_np_arrays(save_path):
     try:
         with np.load(save_path) as data:
-            return data["data"]
+            return data['data']
     except Exception as e:
-        print(f"Failed to load array: {e}")
+        print(f'Failed to load array: {e}')
         return None
