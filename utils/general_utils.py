@@ -6,8 +6,8 @@ import sys
 
 from baukit import TraceDict # baukit: https://github.com/davidbau/baukit
 import numpy as np
-import torch
 from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
+import torch
 from tqdm import tqdm
 
 
