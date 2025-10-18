@@ -54,7 +54,7 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
         for layer_idx, neurons in candidate_neurons.items():
             c = centroids[layer_idx].reshape(1, -1) # centroid of the i-th layer.
             # (i-1)-th layer hidden_state.
-            ht_pre = ht_all_layer[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
+            hs_pre = ht_all_layer[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
             # i-th layer attention output.
             atts = post_attention_values[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
             # i-th layer activation values (act_fn(x) * up_proj(x))
@@ -63,7 +63,7 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
             acts = act_fn * up_proj
 
             # layer score at i-th layer.
-            layer_score = (ht_pre + atts).reshape(1, -1) # H^l-1 + Att^l.
+            layer_score = (hs_pre + atts).reshape(1, -1) # H^l-1 + Att^l.
             if score_type == 'L2_dis':
                 layer_score = euclidean_distances(layer_score, c)[0, 0]
             elif score_type == 'cos_sim':
@@ -72,7 +72,7 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
             neuron_indices = np.array(candidate_neurons[layer_idx])
             value_vectors = model.model.layers[layer_idx].mlp.down_proj.weight.T.data[neuron_indices].detach().cpu().numpy()
             # neuron scores at i-th layer.
-            hs_with_neurons = (ht_pre + atts + (acts.reshape(-1, 1) * value_vectors)) # H^l-1 + Att^l + av (a: activation value, v: correnponding value vector). 
+            hs_with_neurons = (hs_pre + atts + (acts.reshape(-1, 1) * value_vectors)) # H^l-1 + Att^l + av (a: activation value, v: correnponding value vector). 
             if score_type == 'L2_dis':
                 neuron_scores = euclidean_distances(hs_with_neurons, c).reshape(-1)
                 neuron_scores = np.where(neuron_scores <= layer_score, abs(layer_score - neuron_scores), -abs(layer_score - neuron_scores))
