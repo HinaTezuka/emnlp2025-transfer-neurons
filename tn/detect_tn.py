@@ -17,6 +17,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('model_id', type=str, help='model_path at HuggingFace Hub.')
     parser.add_argument('TN_Type', type=str, help='Type of TN you want to detect.')
+    parser.add_argument('top_n', type=int, default=1000, help='top-n neurons from the score ranking.')
     parser.add_argument('lang_for_TN', type=str, help='language you wan to detect as Transfer Neurons.')
     parser.add_argument('scoring_type', type=str, help='scoring metric: either "cos_sim"(cosine similarity) or "L2_dis"(euclidean distance) can be accepted.')
     parser.add_argument('centroids_path', type=str, help='path for the list of centroids (.pkl).')
@@ -25,6 +26,7 @@ if __name__ == '__main__':
 
     model_id = args.model_id
     tn_type = args.TN_Type
+    top_n = args.top_n
     L2 = args.lang_for_TN
     score_type = args.scoring_type
     centroids_path = args.centroids_path
@@ -55,6 +57,9 @@ if __name__ == '__main__':
     # run detection.
     scores = compute_scores_for_tn_detection(model, tokenizer, device, sentences, candidates, centroids, score_type)
     sorted_neurons, score_dict = sort_neurons_by_score(scores)
+    if tn_type == 'type2':
+        sorted_neurons = [neuron for neuron in sorted_neurons if neuron[0] in [ _ for _ in range(20, 32)]]
+    sorted_neurons = sorted_neurons[:top_n]
 
     # save as pkl.
     sorted_neurons_path = f"data/tn/{L2}_{tn_type}.pkl"
