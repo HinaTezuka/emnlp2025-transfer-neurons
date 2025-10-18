@@ -33,7 +33,6 @@ def aggregate_hs_for_type1(model, tokenizer, device, num_layers, data, L2):
         for layer_idx in range(num_layers):
             hs1 = all_hidden_states1[layer_idx][:, last_token_index1, :].squeeze().detach().cpu().numpy()
             hs2 = all_hidden_states2[layer_idx][:, last_token_index2, :].squeeze().detach().cpu().numpy()
-            # save mean of (en_ht, L2_ht). <- estimated shared point in shared semantic space.
             c = np.stack([hs1, hs2])
             c = np.mean(c, axis=0)
             c_hidden_states[layer_idx].append(c)
@@ -43,7 +42,7 @@ def aggregate_hs_for_type1(model, tokenizer, device, num_layers, data, L2):
 def aggregate_hs_for_type2(model, tokenizer, device, num_layers, data, L2):
     hidden_states = defaultdict(list)
     for text in tqdm(data, total=len(data), desc=f'aggregating hs for centroids computation (Type-2 neurons, {L2} sentences) ...'):
-        inputs = tokenizer(text, return_tensors='pt').to(device) # english text.
+        inputs = tokenizer(text, return_tensors='pt').to(device)
 
         with torch.no_grad():
             output = model(**inputs, output_hidden_states=True)
@@ -57,9 +56,9 @@ def aggregate_hs_for_type2(model, tokenizer, device, num_layers, data, L2):
     return dict(hidden_states)
 
 def get_centroid(hidden_states: dict):
-    centroids = [] # [c1, c2, ] len = layer_num
+    centroids = []
     for layer_idx, c in hidden_states.items():
-        final_c = np.mean(c, axis=0) # calc mean of c(shared point per text) of all text.
+        final_c = np.mean(c, axis=0)
         centroids.append(final_c)
     return centroids
 
@@ -71,9 +70,7 @@ for Type-1 neurons detection: sentences must be a list of parallels pairs(tuple)
 for Type-2 neurons detection: sentence must be a list of L2 sentences: [L2_sentence1, L2_sentence2, L2_sentence3, ...]
 
 You can use any sentence datasets as long as the datasets meet the conditions above.
-"""
 
-"""
 example usage:
 python calc_centroid.py \
     meta-llama/Meta-Llama-3-8B \
