@@ -38,16 +38,16 @@ def get_inner_reps(model, prompt):
 def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_neurons, centroids, score_type):
     num_layers = model.config.num_hidden_layers
     num_candidate_layers = len(candidate_neurons.keys())
-    num_neurons = 14336
-    scores_all_txt = np.zeros((num_candidate_layers, num_neurons, len(data))) # final_scoreを計算する前の保存用.
-    final_scores = np.zeros((num_candidate_layers, num_neurons))
+    num_neurons = model.config.intermediate_size
+    scores_all_txt = np.zeros((num_candidate_layers, num_neurons, len(data))) # temp save array across all the input samples.
+    final_scores = np.zeros((num_candidate_layers, num_neurons)) # save array for final score of each candidate neuron.
 
     for text_idx, text in tqdm(enumerate(data), total=len(data), desc=f'Computing scores for all the candidate neurons for {len(data)} samples ...'):
-        inputs = tokenizer(text, return_tensors="pt").to(device)
+        inputs = tokenizer(text, return_tensors='pt').to(device)
 
         # extract hidden activations.
         MLP_act_values, up_proj_values, post_attention_values, outputs = get_inner_reps(model, inputs.input_ids)
-        ht_all_layer = outputs.hidden_states # len==33(0-32), including 0th layer(embedding layer). <- emb(0th) layer is needed to calc scores for neurons in 1st-decoder layer.
+        ht_all_layer = outputs.hidden_states # including 0th layer(emb layer): emb layer is needed to calc scores for neurons in 1st-decoder layer.
         token_len = inputs.input_ids.size(1)
         last_token_idx = token_len - 1
 
@@ -63,8 +63,8 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
             up_proj = up_proj_values[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
             acts = act_fn * up_proj # MLP activations.
 
-            # layer_score.
-            layer_score = (ht_pre + atts).reshape(1, -1) # H^l-1 * Att^l
+            # layer score at i-th layer.
+            layer_score = (ht_pre + atts).reshape(1, -1) # H^l-1 + Att^l.
             if score_type == 'L2_dis':
                 layer_score = euclidean_distances(layer_score, c)[0, 0]
             elif score_type == 'cos_sim':
@@ -72,7 +72,8 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
 
             neuron_indices = np.array(candidate_neurons[layer_idx])
             value_vectors = model.model.layers[layer_idx].mlp.down_proj.weight.T.data[neuron_indices].detach().cpu().numpy()
-            scores = (ht_pre + atts + (acts.reshape(-1, 1) * value_vectors))
+            # neuron scores at i-th layer.
+            scores = (ht_pre + atts + (acts.reshape(-1, 1) * value_vectors)) # H^l-1 + Att^l + av (a: activation value, v: correnponding value vector). 
             if score_type == 'L2_dis':
                 scores = euclidean_distances(scores, c).reshape(-1)
                 scores = np.where(scores <= layer_score, abs(layer_score - scores), -abs(layer_score - scores))
