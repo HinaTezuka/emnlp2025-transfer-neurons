@@ -72,14 +72,14 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
             neuron_indices = np.array(candidate_neurons[layer_idx])
             value_vectors = model.model.layers[layer_idx].mlp.down_proj.weight.T.data[neuron_indices].detach().cpu().numpy()
             # neuron scores at i-th layer.
-            scores = (ht_pre + atts + (acts.reshape(-1, 1) * value_vectors)) # H^l-1 + Att^l + av (a: activation value, v: correnponding value vector). 
+            hs_with_neurons = (ht_pre + atts + (acts.reshape(-1, 1) * value_vectors)) # H^l-1 + Att^l + av (a: activation value, v: correnponding value vector). 
             if score_type == 'L2_dis':
-                scores = euclidean_distances(scores, c).reshape(-1)
-                scores = np.where(scores <= layer_score, abs(layer_score - scores), -abs(layer_score - scores))
+                neuron_scores = euclidean_distances(hs_with_neurons, c).reshape(-1)
+                neuron_scores = np.where(neuron_scores <= layer_score, abs(layer_score - neuron_scores), -abs(layer_score - neuron_scores))
             elif score_type == 'cos_sim':
-                scores = cosine_similarity(scores, c).reshape(-1)
-                scores = np.where(scores >= layer_score, abs(layer_score - scores), -abs(layer_score - scores))
-            scores_all_txt[layer_idx, :, text_idx] = scores
+                neuron_scores = cosine_similarity(hs_with_neurons, c).reshape(-1)
+                neuron_scores = np.where(neuron_scores >= layer_score, abs(layer_score - neuron_scores), -abs(layer_score - neuron_scores))
+            scores_all_txt[layer_idx, :, text_idx] = neuron_scores
 
     # final scores (mean scores for all the input samples).
     final_scores[:, :] = np.mean(scores_all_txt, axis=2)
