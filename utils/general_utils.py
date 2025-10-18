@@ -47,14 +47,14 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
 
         # extract hidden activations.
         MLP_act_values, up_proj_values, post_attention_values, outputs = get_inner_reps(model, inputs.input_ids)
-        ht_all_layer = outputs.hidden_states # including 0th layer(emb layer): emb layer is needed to calc scores for neurons in 1st-decoder layer.
+        hs_all_layer = outputs.hidden_states # including 0th layer(emb layer): emb layer is needed to calc scores for neurons in 1st-decoder layer.
         token_len = inputs.input_ids.size(1)
         last_token_idx = token_len - 1
 
         for layer_idx, neurons in candidate_neurons.items():
             c = centroids[layer_idx].reshape(1, -1) # centroid of the i-th layer.
             # (i-1)-th layer hidden_state.
-            hs_pre = ht_all_layer[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
+            hs_pre = hs_all_layer[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
             # i-th layer attention output.
             atts = post_attention_values[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
             # i-th layer activation values (act_fn(x) * up_proj(x))
