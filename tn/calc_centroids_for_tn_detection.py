@@ -7,6 +7,7 @@ import sys
 import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from tqdm import tqdm
 
 from utils.general_utils import (
     seed_everything,
@@ -14,20 +15,20 @@ from utils.general_utils import (
     unfreeze_pickle,
 )
 
-def aggregate_hs_for_type1(model, tokenizer, device, num_layers, data):
+def aggregate_hs_for_type1(model, tokenizer, device, num_layers, data, L2):
     c_hidden_states = defaultdict(list)
-    for text1, text2 in data:
-        inputs1 = tokenizer(text1, return_tensors="pt").to(device) # english text
-        inputs2 = tokenizer(text2, return_tensors="pt").to(device) # L2 text
+    for text1, text2 in tqdm(data, total=len(data), desc=f'aggregating hs for centroids computation (Type-1 neurons, eng-{L2} sentence pairs) ...'):
+        inputs1 = tokenizer(text1, return_tensors='pt').to(device) # english text.
+        inputs2 = tokenizer(text2, return_tensors='pt').to(device) # L2 text.
 
         with torch.no_grad():
             output1 = model(**inputs1, output_hidden_states=True)
             output2 = model(**inputs2, output_hidden_states=True)
 
-        all_hidden_states1 = output1.hidden_states[1:] # remove embedding layer
+        all_hidden_states1 = output1.hidden_states[1:] # exclude embedding layer.
         all_hidden_states2 = output2.hidden_states[1:]
-        last_token_index1 = inputs1["input_ids"].shape[1] - 1
-        last_token_index2 = inputs2["input_ids"].shape[1] - 1
+        last_token_index1 = inputs1['input_ids'].shape[1] - 1
+        last_token_index2 = inputs2['input_ids'].shape[1] - 1
 
         for layer_idx in range(num_layers):
             hs1 = all_hidden_states1[layer_idx][:, last_token_index1, :].squeeze().detach().cpu().numpy()
@@ -39,19 +40,16 @@ def aggregate_hs_for_type1(model, tokenizer, device, num_layers, data):
 
     return dict(c_hidden_states)
 
-def aggregate_hs_for_type2(model, tokenizer, device, num_layers, data):
+def aggregate_hs_for_type2(model, tokenizer, device, num_layers, data, L2):
     hidden_states = defaultdict(list)
+    for text in tqdm(data, total=len(data), desc=f'aggregating hs for centroids computation (Type-2 neurons, {L2} sentences) ...'):
+        inputs = tokenizer(text, return_tensors='pt').to(device) # english text.
 
-    torch.manual_seed(42)
-    for text1 in data:
-        inputs = tokenizer(text1, return_tensors="pt").to(device) # english text
-
-        # get hidden_states
         with torch.no_grad():
             output = model(**inputs, output_hidden_states=True)
 
         all_hidden_states = output.hidden_states[1:] # exclude embedding layer
-        last_token_index = inputs["input_ids"].shape[1] - 1
+        last_token_index = inputs['input_ids'].shape[1] - 1
         for layer_idx in range(num_layers):
             hs = all_hidden_states[layer_idx][:, last_token_index, :].squeeze().detach().cpu().numpy()
             hidden_states[layer_idx].append(hs)
@@ -76,7 +74,7 @@ You can use any sentence datasets as long as the datasets meet the conditions ab
 """
 
 """
-hwo to use (e.g.,):
+example usage:
 python calc_centroid.py \
     meta-llama/Meta-Llama-3-8B \
     type1 \
@@ -98,7 +96,7 @@ if __name__ == '__main__':
     sentence_path = args.sentence_path
 
     # model params.
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model = AutoModelForCausalLM.from_pretrained(model_id).to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     num_layers = model.config.num_hidden_layers    
@@ -107,9 +105,9 @@ if __name__ == '__main__':
 
     # compute centroids.
     sentences = unfreeze_pickle(sentence_path)
-    hidden_states = aggregate_hs_for_type1(model, tokenizer, device, num_layers, sentences) if tn_type == 'type1' else aggregate_hs_for_type2(model, tokenizer, device, num_layers, sentences)
-    centroids = get_centroid(hidden_states)
+    hidden_states = aggregate_hs_for_type1(model, tokenizer, device, num_layers, sentences, L2) if tn_type == 'type1' else aggregate_hs_for_type2(model, tokenizer, device, num_layers, sentences, L2)
+    centroids = get_centroid(hidden_states) # list: [centroid_for_layer1(np.ndarray), centroid_for_layer2, ...]
 
     # save centroids as pkl.
-    save_path = f"data/centroids/c_for_type1_{L2}.pkl"
+    save_path = f'data/centroids/c_for_type1_{L2}.pkl'
     save_as_pickle(save_path, centroids)
