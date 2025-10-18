@@ -56,13 +56,13 @@ if __name__ == '__main__':
 
     # run detection.
     scores = compute_scores_for_tn_detection(model, tokenizer, device, sentences, candidates, centroids, score_type)
-    sorted_neurons, score_dict = sort_neurons_by_score(scores)
+    neuron_ranking, score_dict = sort_neurons_by_score(scores)
     if tn_type == 'type2':
-        sorted_neurons = [neuron for neuron in sorted_neurons if neuron[0] in [ _ for _ in range(20, 32)]]
-    sorted_neurons = sorted_neurons[:top_n]
+        neuron_ranking = [neuron for neuron in neuron_ranking if neuron[0] in [ _ for _ in range(20, 32)]]
+    top_transfer_neurons = neuron_ranking[:top_n]
 
     # save as pkl.
-    sorted_neurons_path = f"data/tn/{L2}_{tn_type}.pkl"
+    sorted_neurons_path = f"data/tn/{L2}_{tn_type}_top{top_n}.pkl"
     score_dict_path = f"data/tn/{L2}_{tn_type}_score_dict.pkl"
-    save_as_pickle(sorted_neurons_path, sorted_neurons)
+    save_as_pickle(sorted_neurons_path, top_transfer_neurons)
     save_as_pickle(score_dict_path, score_dict)
