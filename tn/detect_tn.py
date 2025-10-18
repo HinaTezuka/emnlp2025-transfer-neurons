@@ -4,7 +4,7 @@ import pickle
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-from utils.general_utils import (
+from ..utils.general_utils import (
     seed_everything,
     compute_scores_for_tn_detection,
     sort_neurons_by_score,
