@@ -84,7 +84,7 @@ if __name__ == '__main__':
     parser.add_argument('model_id', type=str, help='model_path at HuggingFace Hub.')
     parser.add_argument('TN_Type', type=str, help='Type of TN you want to detect.')
     parser.add_argument('lang_for_TN', type=str, help='language you wan to detect as Transfer Neurons.')
-    parser.add_argument('sentence_path', type=str, halp='sentences dataset path.')
+    parser.add_argument('sentence_path', type=str, help='sentences dataset path.')
     args = parser.parse_args()
 
     model_id = args.model_id
