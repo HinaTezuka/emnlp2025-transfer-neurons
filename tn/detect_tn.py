@@ -20,7 +20,7 @@ if __name__ == '__main__':
     parser.add_argument('lang_for_TN', type=str, help='language you wan to detect as Transfer Neurons.')
     parser.add_argument('scoring_type', type=str, help='scoring metric: either "cos_sim"(cosine similarity) or "L2_dis"(euclidean distance) can be accepted.')
     parser.add_argument('centroids_path', type=str, help='path for the list of centroids (.pkl).')
-    parser.add_argument('sentence_path', type=str, halp='sentences dataset path.')
+    parser.add_argument('sentence_path', type=str, help='sentences dataset path.')
     args = parser.parse_args()
 
     model_id = args.model_id
