@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# example data generator.
+s.py
+
 # Distribution / packaging
 .Python
 build/
