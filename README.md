@@ -22,12 +22,42 @@ You can use any sentence datasets as long as the datasets meet the conditions ab
 (In the paper, we used tatoeba corpus: https://huggingface.co/datasets/Helsinki-NLP/tatoeba)
 
 ### Centroids Estimation
-**For the centroids of shared semantic latent space (Type-1 neurons):**  
-example usage:
+**example usage (for Type-1 neurons):**
 ```bash
 python -m tn.calc_centroids_for_tn_detection \
-    mistralai/Mistral-7B-v0.3 \
-    type1 \
-    ja \
-    data/example_sentences/ja_parallel_train.pkl
+    --model_id mistralai/Mistral-7B-v0.3 \
+    --TN_Type type1 \
+    --lang_for_TN ja \
+    --sentence_path path/to/your/parallel_sentences_ja.pkl
 ```
+**example usage (for Type-2 neurons):**
+```bash
+python -m tn.calc_centroids_for_tn_detection \
+    --model_id mistralai/Mistral-7B-v0.3 \
+    --TN_Type type2 \
+    --lang_for_TN ja \
+    --sentence_path path/to/your/monolingual_sentences_ja.pkl
+```
+
+### Transfer Neurons Detection
+**example usage (for Type-1 neurons):**  
+```bash
+python -m tn.calc_centroids_for_tn_detection \
+    --model_id mistralai/Mistral-7B-v0.3 \
+    --TN_Type type1 \
+    --lang_for_TN ja \
+    --sentence_path path/to/your/parallel_sentences_ja.pkl
+```
+**example usage (for Type-2 neurons):**
+```bash
+python -m tn.calc_centroids_for_tn_detection \
+    --model_id mistralai/Mistral-7B-v0.3 \
+    --TN_Type type2 \
+    --top_n 1000 \
+    --lang_for_TN ja \
+    --scoring_type cos_sim \
+    --cnetroids_path path/to/ja_latent_space_centroids \
+    --sentence_path path/to/your/parallel_sentences_ja.pkl
+```
+**Notes:** In our paper, we used LLMs consisting of 32 decoder layers. Accordingly, we set the candidate layers to 1–20 for identifying Type-1 neurons and 21–32 for identifying Type-2 neurons.
+If you use an LLM with a different number of layers, please adjust the candidate layer range as appropriate by modifying ```candidate_layers_range = 20 if tn_type == 'type1' else 32``` in the ```tn/detect_tn.py``` file.
