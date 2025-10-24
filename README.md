@@ -77,5 +77,5 @@ If you use an LLM with a different number of layers, please adjust the candidate
 }
 ```
 
-## Acknowledgemants
+## Acknowledgments
 We would like to thank [baukit](https://github.com/davidbau/baukit) , for providing an excellent package that greatly facilitated our experiments.
