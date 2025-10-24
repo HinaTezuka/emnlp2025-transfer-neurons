@@ -4,7 +4,7 @@ import pickle
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-from ..utils.general_utils import (
+from utils.general_utils import (
     seed_everything,
     compute_scores_for_tn_detection,
     sort_neurons_by_score,
@@ -14,13 +14,13 @@ from ..utils.general_utils import (
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('model_id', type=str, help='model_path at HuggingFace Hub.')
-    parser.add_argument('TN_Type', type=str, help='Type of TN you want to detect.')
-    parser.add_argument('top_n', type=int, default=1000, help='top-n neurons from the score ranking.')
-    parser.add_argument('lang_for_TN', type=str, help='language you wan to detect as Transfer Neurons.')
-    parser.add_argument('scoring_type', type=str, help='scoring metric: either "cos_sim"(cosine similarity) or "L2_dis"(euclidean distance) can be accepted.')
-    parser.add_argument('centroids_path', type=str, help='path for the list of centroids (.pkl).')
-    parser.add_argument('sentence_path', type=str, help='sentences dataset path.')
+    parser.add_argument('--model_id', type=str, required=True, help='model_path at HuggingFace Hub.')
+    parser.add_argument('--TN_Type', type=str, required=True, help='Type of TN you want to detect.')
+    parser.add_argument('--top_n', type=int, required=True, default=1000, help='top-n neurons from the score ranking.')
+    parser.add_argument('--lang_for_TN', type=str, required=True, help='language you wan to detect as Transfer Neurons.')
+    parser.add_argument('--scoring_type', type=str, required=True, help='scoring metric: either "cos_sim"(cosine similarity) or "L2_dis"(euclidean distance) can be accepted.')
+    parser.add_argument('--centroids_path', type=str, required=True, help='path for the list of centroids (.pkl).')
+    parser.add_argument('--sentence_path', type=str, required=True, help='sentences dataset path.')
     args = parser.parse_args()
 
     model_id = args.model_id
