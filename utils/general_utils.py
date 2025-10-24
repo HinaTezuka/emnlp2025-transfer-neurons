@@ -63,11 +63,11 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
             acts = act_fn * up_proj
 
             # layer score at i-th layer.
-            layer_score = (hs_pre + atts).reshape(1, -1) # H^l-1 + Att^l.
+            hs_before_mlp = (hs_pre + atts).reshape(1, -1) # H^l-1 + Att^l.
             if score_type == 'L2_dis':
-                layer_score = euclidean_distances(layer_score, c)[0, 0]
+                layer_score = euclidean_distances(hs_before_mlp, c)[0, 0]
             elif score_type == 'cos_sim':
-                layer_score = cosine_similarity(layer_score, c)[0, 0]
+                layer_score = cosine_similarity(hs_before_mlp, c)[0, 0]
 
             neuron_indices = np.array(candidate_neurons[layer_idx])
             value_vectors = model.model.layers[layer_idx].mlp.down_proj.weight.T.data[neuron_indices].detach().cpu().numpy()
