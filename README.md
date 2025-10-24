@@ -48,8 +48,8 @@ python -m tn.detect_tn \
     --top_n 1000 \
     --lang_for_TN ja \
     --scoring_type cos_sim \
-    --centroids_path data/centroids/example_c_for_type2_ja.pkl \
-    --sentence_path data/example_sentences/ja_mono_train.pkl
+    --centroids_path path/to/your/centroids_for_type1_detection_ja.pkl \
+    --sentence_path path/to/your/monolingual_sentences_ja.pkl
 ```
 **example usage (for Type-2 neurons):**
 ```bash
@@ -59,8 +59,8 @@ python -m tn.detect_tn \
     --top_n 1000 \
     --lang_for_TN ja \
     --scoring_type cos_sim \
-    --centroids_path data/centroids/example_c_for_type2_ja.pkl \
-    --sentence_path data/example_sentences/ja_mono_train.pkl
+    --centroids_path path/to/your/centroids_for_type2_detection_ja.pkl \
+    --sentence_path path/to/your/monolingual_sentences_ja.pkl
 ```
 As a distance function, you may choose either "cos_sim" (Cosine similarity) or "L2_dis" (Euclidean distance).
 
