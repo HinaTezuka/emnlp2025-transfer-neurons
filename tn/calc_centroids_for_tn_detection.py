@@ -82,7 +82,7 @@ python calc_centroid.py \
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_id', type=str, required=True, help='model_path at HuggingFace Hub.')
-    parser.add_argument('--TN_Type', type=str, required=True, help='Type of TN you want to detect.')
+    parser.add_argument('--TN_Type', type=str, required=True, choices=['type1', 'type2'], help='Type of TN you want to detect.')
     parser.add_argument('--lang_for_TN', type=str, required=True, help='language you wan to detect as Transfer Neurons.')
     parser.add_argument('--sentence_path', type=str, required=True, help='sentences dataset path.')
     args = parser.parse_args()
