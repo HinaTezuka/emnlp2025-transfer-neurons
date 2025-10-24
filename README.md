@@ -11,7 +11,7 @@ Towards a deeper understanding of this framework, we propose and empirically val
 Furthermore, we show that one function of language-specific neurons, as identified in recent studies, is to facilitate movement between latent spaces.
 Finally, we show that transfer neurons are critical for reasoning in multilingual LLMs.
 <p align="center">
-<img src="tn_figure1.png" width="70%" />
+<img src="figs/tn_figure1.png" width="70%" />
 </p>
 
 ## Set Up
