@@ -4,6 +4,10 @@ update comming soon...
 
 paper: 
 
+<p align="center">
+<img src="tn_figure1.png" width="70%" />
+</p>
+
 ## Set Up
 ```bash
 python -m venv tn_detection
