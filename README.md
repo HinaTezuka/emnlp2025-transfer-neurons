@@ -4,7 +4,7 @@ update comming soon...
 
 paper: 
 
-## Set up
+## Set Up
 ```bash
 python -m venv tn_detection
 pip install -r requirements.txt
