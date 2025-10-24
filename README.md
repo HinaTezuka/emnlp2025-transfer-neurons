@@ -16,6 +16,8 @@ Finally, we show that transfer neurons are critical for reasoning in multilingua
 
 ## Set Up
 ```bash
+git clone https://github.com/HinaTezuka/emnlp2025-transfer-neurons.git
+cd emnlp2025-transfer-neurons
 python -m venv tn_detection
 pip install -r requirements.txt
 source bin/tn_detection/activate
