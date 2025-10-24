@@ -42,22 +42,27 @@ python -m tn.calc_centroids_for_tn_detection \
 ### Transfer Neurons Detection
 **example usage (for Type-1 neurons):**  
 ```bash
-python -m tn.calc_centroids_for_tn_detection \
+python -m tn.detect_tn \
     --model_id mistralai/Mistral-7B-v0.3 \
     --TN_Type type1 \
-    --lang_for_TN ja \
-    --sentence_path path/to/your/parallel_sentences_ja.pkl
-```
-**example usage (for Type-2 neurons):**
-```bash
-python -m tn.calc_centroids_for_tn_detection \
-    --model_id mistralai/Mistral-7B-v0.3 \
-    --TN_Type type2 \
     --top_n 1000 \
     --lang_for_TN ja \
     --scoring_type cos_sim \
-    --cnetroids_path path/to/ja_latent_space_centroids \
-    --sentence_path path/to/your/parallel_sentences_ja.pkl
+    --centroids_path data/centroids/example_c_for_type2_ja.pkl \
+    --sentence_path data/example_sentences/ja_mono_train.pkl
 ```
+**example usage (for Type-2 neurons):**
+```bash
+python -m tn.detect_tn \
+    --model_id mistralai/Mistral-7B-v0.3 \
+    --TN_Type type1 \
+    --top_n 1000 \
+    --lang_for_TN ja \
+    --scoring_type cos_sim \
+    --centroids_path data/centroids/example_c_for_type2_ja.pkl \
+    --sentence_path data/example_sentences/ja_mono_train.pkl
+```
+As a distance function, you can choose "cos_sim" (cosine similarity) or "L2_dis" (euclidean_distance).
+
 **Notes:** In our paper, we used LLMs consisting of 32 decoder layers. Accordingly, we set the candidate layers to 1–20 for identifying Type-1 neurons and 21–32 for identifying Type-2 neurons.
 If you use an LLM with a different number of layers, please adjust the candidate layer range as appropriate by modifying ```candidate_layers_range = 20 if tn_type == 'type1' else 32``` in the ```tn/detect_tn.py``` file.
