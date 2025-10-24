@@ -66,3 +66,13 @@ As a distance function, you may choose either "cos_sim" (Cosine similarity) or "
 
 **Notes:** In our paper, we used LLMs consisting of 32 decoder layers. Accordingly, we set the candidate layers to 1–20 for identifying Type-1 neurons and 21–32 for identifying Type-2 neurons.
 If you use an LLM with a different number of layers, please adjust the candidate layer range as appropriate by modifying ```candidate_layers_range = 20 if tn_type == 'type1' else 32``` in the ```tn/detect_tn.py``` file.
+
+## Citation
+```
+@inproceedings{tezuka-etal-2025-tn,
+    title={The Transfer Neurons Hypothesis: An Underlying Mechanism for Language Latent Space Transitions in Multilingual LLMs.},
+    author={Tezuka, Hinata and Inoue, Naoya},
+    booktitle={Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+    year={2025}
+}
+```
