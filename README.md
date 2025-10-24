@@ -33,7 +33,7 @@ source bin/tn_detection/activate
 - For Type-2 neurons detection: sentence must be a list of L2 sentences: ```[L2_sentence1, L2_sentence2, L2_sentence3, ...]```
 
 You can use any sentence datasets as long as the datasets meet the conditions above.  
-(In the paper, we used tatoeba corpus: https://huggingface.co/datasets/Helsinki-NLP/tatoeba)
+(In the paper, we used [tatoeba](https://huggingface.co/datasets/Helsinki-NLP/tatoeba) corpus.)
 
 ### Centroids Estimation
 **example usage (for Type-1 neurons):**
