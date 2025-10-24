@@ -9,7 +9,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
 
-from ..utils.general_utils import (
+from utils.general_utils import (
     seed_everything,
     save_as_pickle,
     unfreeze_pickle,
