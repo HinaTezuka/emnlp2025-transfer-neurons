@@ -41,7 +41,7 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
     scores_all_txt = np.zeros((num_candidate_layers, num_neurons, len(data))) # temp save array across all the input samples.
     final_scores = np.zeros((num_candidate_layers, num_neurons)) # save array for final score of each candidate neuron.
 
-    for text_idx, text in tqdm(enumerate(data), total=len(data), desc=f'Computing scores for all the candidate neurons for {len(data)} samples ...'):
+    for text_idx, text in tqdm(enumerate(data), total=len(data), desc=f'Computing scores of all the candidate neurons for {len(data)} samples ...'):
         inputs = tokenizer(text, return_tensors='pt').to(device)
 
         # extract hidden activations.
