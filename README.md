@@ -69,14 +69,14 @@ python -m tn.detect_tn \
 ```bash
 python -m tn.detect_tn \
     --model_id mistralai/Mistral-7B-v0.3 \
-    --TN_Type type1 \
+    --TN_Type type2 \
     --top_n 1000 \
     --lang_for_TN ja \
     --scoring_type cos_sim \
     --centroids_path path/to/your/centroids_for_type2_detection_ja.pkl \
     --sentence_path path/to/your/monolingual_sentences_ja.pkl
 ```
-As a distance function, you may choose either "cos_sim" (Cosine similarity) or "L2_dis" (Euclidean distance).
+As a distance function, you may choose either ```cos_sim``` (Cosine similarity) or ```L2_dis``` (Euclidean distance).
 
 **Notes:** In our paper, we used LLMs consisting of 32 decoder layers. Accordingly, we set the candidate layers to 1–20 for identifying Type-1 neurons and 21–32 for identifying Type-2 neurons.
 If you use an LLM with a different number of layers, please adjust the candidate layer range as appropriate by modifying ```candidate_layers_range = 20 if tn_type == 'type1' else 32``` and ```if tn_type == 'type2': neuron_ranking = [neuron for neuron in neuron_ranking if neuron[0] in [ _ for _ in range(20, 32)]]``` in the ```tn/detect_tn.py``` file.
