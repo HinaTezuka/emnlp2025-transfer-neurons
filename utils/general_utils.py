@@ -29,14 +29,13 @@ def get_inner_reps(model, prompt):
         with torch.no_grad():
             outputs = model(prompt, output_hidden_states=True)
     
-    MLP_act_values = [ret[act].output for act in MLP_act]
+    act_fn_values = [ret[act].output for act in MLP_act]
     up_proj_values = [ret[proj].output for proj in MLP_up_proj]
     ATT_values = [ret[att].output for att in ATT_act]
     
-    return MLP_act_values, up_proj_values, ATT_values, outputs
+    return act_fn_values, up_proj_values, ATT_values, outputs
 
 def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_neurons, centroids, score_type):
-    num_layers = model.config.num_hidden_layers
     num_candidate_layers = len(candidate_neurons.keys())
     num_neurons = model.config.intermediate_size
     scores_all_txt = np.zeros((num_candidate_layers, num_neurons, len(data))) # temp save array across all the input samples.
@@ -46,7 +45,7 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
         inputs = tokenizer(text, return_tensors='pt').to(device)
 
         # extract hidden activations.
-        MLP_act_values, up_proj_values, post_attention_values, outputs = get_inner_reps(model, inputs.input_ids)
+        act_fn_values, up_proj_values, post_attention_values, outputs = get_inner_reps(model, inputs.input_ids)
         hs_all_layer = outputs.hidden_states # including 0th layer(emb layer): emb layer is needed to calc scores for neurons in 1st-decoder layer.
         token_len = inputs.input_ids.size(1)
         last_token_idx = token_len - 1
@@ -58,9 +57,10 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
             # i-th layer attention output.
             atts = post_attention_values[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
             # i-th layer activation values (act_fn(x) * up_proj(x))
-            act_fn = MLP_act_values[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
+            act_fn = act_fn_values[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
             up_proj = up_proj_values[layer_idx][:, last_token_idx, :].squeeze().detach().cpu().numpy()
-            acts = act_fn * up_proj
+            # MLP Computation: self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x))
+            acts = act_fn * up_proj # you can get the same values using "register_forward_pre_hook" to the mlp.down_proj module.
 
             # layer score at i-th layer.
             hs_before_mlp = (hs_pre + atts).reshape(1, -1) # H^l-1 + Att^l.
