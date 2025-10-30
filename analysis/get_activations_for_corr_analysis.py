@@ -16,7 +16,7 @@ from utils.general_utils import (
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_id', type=str, required=True, help='model_path at HuggingFace Hub.')
-    # In the paper, as a sentence dataset, we sampled 1k sentences from tatoeba corpus(https://huggingface.co/datasets/Helsinki-NLP/tatoeba) for each language.
+    # In the paper, as a sentence dataset, we sampled 1k sentences from tatoeba corpus (https://huggingface.co/datasets/Helsinki-NLP/tatoeba) for each language.
     parser.add_argument('--ja_sentence_path', type=str, default='data/example_sentences/ja_mono_test.pkl', help='sentence data for Japanese.')
     parser.add_argument('--nl_sentence_path', type=str, default='data/example_sentences/nl_mono_test.pkl', help='sentence data for Dutch.')
     parser.add_argument('--ko_sentence_path', type=str, default='data/example_sentences/ko_mono_test.pkl', help='sentence data for Korean.')
