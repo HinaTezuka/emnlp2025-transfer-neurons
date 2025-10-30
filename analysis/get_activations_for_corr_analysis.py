@@ -4,7 +4,7 @@ import pickle
 import sys
 
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from utils.general_utils import (
     seed_everything,
