@@ -21,7 +21,7 @@ git clone https://github.com/HinaTezuka/emnlp2025-transfer-neurons.git
 cd emnlp2025-transfer-neurons
 # set up an emvironment.
 python -m venv tn_detection
-source bin/tn_detection/activate
+source tn_detection/bin/activate
 pip install -r requirements.txt
 ```
 
