@@ -9,24 +9,9 @@ from utils.general_utils import (
     unfreeze_np_arrays,
 )
 
-def correlationRatio(categories: np.ndarray, values: np.ndarray):
-    interclass_variation  = sum([
-        (len(values[categories == i]) * ((values[categories == i].mean() - values.mean()) ** 2)).sum() for i in np.unique(categories)
-    ]) 
-    total_variation = sum((values - values.mean()) ** 2)
-    return interclass_variation / total_variation
-
-langs = ['ja', 'nl', 'ko', 'it']
-model_types = ['llama3', 'mistral', 'aya']
-# score_types = ['cos_sim', 'L2_dis']
-score_types = ['cos_sim']
-is_reverses = [False, True]
-# is_reverses = [True]
-
-
+# language labels for Japanese/Dutch/Korean/Italian/English (This label must be compatible with sentence data at analysis/get_activations_for_corr_analysis.py).
 l1 = [ 1 for _ in range(1000)]
 l2 = [ 0 for _ in range(1000)]
-# language labels for Japanese/Dutch/Korean/Italian/English (This label must be compatible with sentence data at analysis/get_activations_for_corr_analysis.py).
 labels_dict = {
     'ja': l1 + l2 + l2 + l2 + l2,
     'nl': l2 + l1 + l2 + l2 + l2,
@@ -34,7 +19,6 @@ labels_dict = {
     'it': l2 + l2 + l2 + l1 + l2,
     'en': l2 + l2 + l2 + l2 + l1,
 }
-    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
