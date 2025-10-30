@@ -98,6 +98,45 @@ def sort_neurons_by_score(final_scores):
 
     return sorted_neurons, score_dict
 
+def track_activations_with_text_data(model, tokenizer, device, data):
+    activations_array = np.zeros((model.config.num_hidden_layers, model.config.intermediate_size, len(data)), dtype=np.float16)
+    current_text_idx = None
+
+    def activation_extractor(model, input, layer_idx: int):
+        # extract last-token activations.
+        activation_values = input[0][0, -1, :].detach().cpu().numpy()
+        activations_array[layer_idx, :, current_text_idx] = activation_values
+
+    # set hooks.
+    handles = []
+    for layer_idx, layer in enumerate(model.model.layers):
+        handle = layer.mlp.down_proj.register_forward_pre_hook(
+            lambda model, input, layer_idx=layer_idx: activation_extractor(model, input, layer_idx)
+        )
+        handles.append(handle)
+
+    for text_idx, text in tqdm(enumerate(data), total=len(data), desc='Collecting activations...'):
+        current_text_idx = text_idx
+        inputs = tokenizer(text, return_tensors='pt').to(device)
+        # run inference.
+        with torch.no_grad():
+            _ = model(**inputs)
+
+    # remove handles.
+    for handle in handles:
+        handle.remove()
+
+    return activations_array
+
+def compute_corr_ratio(categories: np.ndarray, values: np.ndarray):
+    # this function were originally cited from: https://www.sambaiz.net/en/article/441/.
+    interclass_variation  = sum([
+        (len(values[categories == i]) * ((values[categories == i].mean() - values.mean()) ** 2)).sum() for i in np.unique(categories)
+    ]) 
+    total_variation = sum((values - values.mean()) ** 2)
+
+    return interclass_variation / total_variation
+
 def save_as_pickle(file_path: str, target_dict) -> None:
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     temp_path = file_path + '.tmp'

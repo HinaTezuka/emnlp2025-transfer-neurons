@@ -72,11 +72,11 @@ For Type-2 neurons detection: sentence must be a list of L2 sentences: [L2_sente
 You can use any sentence datasets as long as the datasets meet the conditions above.
 
 example usage:
-python calc_centroid.py \
-    meta-llama/Meta-Llama-3-8B \
-    type1 \
-    ja \
-    data/sentences/parallel_en-ja.pkl
+python -m tn.calc_centroids_for_tn_detection \
+    --model_id meta-llama/Meta-Llama-3-8B \
+    --TN_Type type1 \
+    --lang_for_TN ja \
+    --sentence_path path/to/your/parallel_sentences_ja.pkl
 """
 
 if __name__ == '__main__':
