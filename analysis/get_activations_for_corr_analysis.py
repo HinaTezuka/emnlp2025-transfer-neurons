@@ -37,9 +37,9 @@ if __name__ == '__main__':
     it = unfreeze_pickle(args.it_sentence_path)
     en = unfreeze_pickle(args.en_sentence_path)
     sentences = ja + nl + ko + it + en
-    print(f"Got {len(sentences)} sentences in total.") # 5000.
+    print(f'Got {len(sentences)} sentences in total.') # 5000.
 
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id).to(device)
 
