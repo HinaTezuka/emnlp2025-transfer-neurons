@@ -2,7 +2,7 @@ from collections import defaultdict
 import os
 import pickle
 import random
-import sys
+from typing import List, Tuple
 
 from baukit import TraceDict # baukit: https://github.com/davidbau/baukit
 import numpy as np
@@ -136,6 +136,34 @@ def compute_corr_ratio(categories: np.ndarray, values: np.ndarray):
     total_variation = sum((values - values.mean()) ** 2)
 
     return interclass_variation / total_variation
+
+def edit_activation(output, layer, layer_idx_and_neuron_idx):
+    for layer_idx, neuron_idx in layer_idx_and_neuron_idx:
+        if f"model.layers.{layer_idx}." in layer:
+            output[:, -1, neuron_idx] *= 0
+
+    return output
+
+def get_hidden_states_including_emb_layer_with_edit_activation(model, tokenizer, device, data, neurons: List[Tuple[int, int]], lang: str) -> np.ndarray:
+    trace_layers = list(set([f'model.layers.{layer}.mlp.act_fn' for layer, _ in neurons]))
+    with TraceDict(model, trace_layers, edit_output=lambda output, layer: edit_activation(output, layer, neurons)) as tr:
+
+        return get_hidden_states_including_emb_layer(model, tokenizer, device, data, lang)
+
+def get_hidden_states_including_emb_layer(model, tokenizer, device, data, lang) -> np.ndarray:
+    hidden_states = np.zeros((model.config.num_hidden_layers+1, len(data), model.config.hidden_size)) # model.config.num_hidden_layers+1: include emb layer.
+
+    for text_idx, text in tqdm(enumerate(data), total=len(data), desc=f'Collecting hs for {lang}...'):
+        inputs = tokenizer(text, return_tensors='pt').to(device)
+
+        with torch.no_grad():
+            outputs = model(**inputs, output_hidden_states=True)
+
+        all_hidden_states1 = outputs.hidden_states # include embedding layer.
+        for layer_idx in range(len(all_hidden_states1)):
+            hidden_states[layer_idx, text_idx, :] = all_hidden_states1[layer_idx][:, -1, :].squeeze().detach().cpu().numpy() # last token hs.
+
+    return hidden_states
 
 def save_as_pickle(file_path: str, target_dict) -> None:
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
