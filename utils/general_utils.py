@@ -159,9 +159,9 @@ def get_hidden_states_including_emb_layer(model, tokenizer, device, data, lang) 
         with torch.no_grad():
             outputs = model(**inputs, output_hidden_states=True)
 
-        all_hidden_states1 = outputs.hidden_states # include embedding layer.
-        for layer_idx in range(len(all_hidden_states1)):
-            hidden_states[layer_idx, text_idx, :] = all_hidden_states1[layer_idx][:, -1, :].squeeze().detach().cpu().numpy() # last token hs.
+        all_hidden_states = outputs.hidden_states # include embedding layer.
+        for layer_idx in range(len(all_hidden_states)):
+            hidden_states[layer_idx, text_idx, :] = all_hidden_states[layer_idx][:, -1, :].squeeze().detach().cpu().numpy() # last token hs.
 
     return hidden_states
 
