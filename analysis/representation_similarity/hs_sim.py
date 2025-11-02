@@ -101,4 +101,4 @@ if __name__ == "__main__":
 
     plot_hs_sim_hist(final_results_same_semantics, final_results_non_same_semantics, lang, save_path_baseline) 
 
-    print(f'Completed.')
+    print(f'Completed. language: {lang}')
