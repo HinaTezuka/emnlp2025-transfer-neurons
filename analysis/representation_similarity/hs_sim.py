@@ -4,12 +4,9 @@ hidden states similarity under the following settings:
     (b): top-n Type-2 neurons intervention.
     (c): baseline (random n. neurons from the same layers as transfer neurons) intervention.
 """
-
 import argparse
 from collections import defaultdict
-import random
 
-import matplotlib.pyplot as plt
 import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
