@@ -5,7 +5,6 @@ hidden states similarity under the following settings:
     (c): baseline (random n. neurons from the same layers as transfer neurons) intervention.
 """
 import argparse
-from collections import defaultdict
 
 import numpy as np
 import torch
