@@ -45,7 +45,7 @@ if __name__ == "__main__":
         --parallel_sentences_path path/to/your/parallel_sentence_pairs_ja \
         --non_parallel_sentences_path path/to/your/random_sentence_pairs_ja \
         --intervention_type 'type1' \
-        --tn_path path/to/your/type1_neurons_ja \
+        --tn_path path/to/your/top_n_type1_neurons_ja \
         --save_path_intervention figs/hs_sim/type1_deactivated_ja \
         --save_path_baseline figs/hs_sim/baseline_deactivated_ja
     """
@@ -70,8 +70,7 @@ if __name__ == "__main__":
     non_parallel_sentence_pairs = unfreeze_pickle(non_parallel_sentences_path)
 
     # unfreeze neurons.
-    # neurons = unfreeze_pickle(tn_path)
-    neurons = unfreeze_pickle(tn_path)[:1000]
+    neurons = unfreeze_pickle(tn_path)
     # make baseline neurons.
     layer_range = (0, 20) if intervention_type == 'type1' else (20, 32)
     neuron_range = (0, model.config.intermediate_size)
