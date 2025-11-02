@@ -2,7 +2,7 @@
 
 update comming soon...
 
-paper: [link](https://aclanthology.org/2025.emnlp-main.1618/)
+paper: [ACL Anthology](https://aclanthology.org/2025.emnlp-main.1618/), [arXiv Preprint](https://arxiv.org/abs/2509.17030)
 
 ## Abstract
 Recent studies have suggested a processing framework for multilingual inputs in decoder-based LLMs: early layers convert inputs into E)glish-centric and language-agnostic representations; middle layers perform reasoning within an English-centric latent space; and final layers generate outputs by transforming these representations back into language-specific latent spaces.
