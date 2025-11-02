@@ -25,7 +25,7 @@ if __name__ == '__main__':
     In the paper, we used parallel sentences in MKQA dataset (1k sentence per language).
 
     example usage:
-    python -m analysis.lang_latent_space.get_hs_for_lang_latent_space_analysis \
+    python -m analysis.lang_latent_space.get_hs_for_lang_latent_space_visualization \
         --model_id meta-llama/Meta-Llama-3-8B \
         --intervention_type type2 \
         --languages ja nl ko it en \
