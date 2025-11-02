@@ -2,10 +2,10 @@
 
 update comming soon...
 
-paper: https://aclanthology.org/2025.emnlp-main.1618/
+paper: [link](https://aclanthology.org/2025.emnlp-main.1618/)
 
 ## Abstract
-Recent studies have suggested a processing framework for multilingual inputs in decoder-based LLMs: early layers convert inputs into English-centric and language-agnostic representations; middle layers perform reasoning within an English-centric latent space; and final layers generate outputs by transforming these representations back into language-specific latent spaces.
+Recent studies have suggested a processing framework for multilingual inputs in decoder-based LLMs: early layers convert inputs into E)glish-centric and language-agnostic representations; middle layers perform reasoning within an English-centric latent space; and final layers generate outputs by transforming these representations back into language-specific latent spaces.
 However, the internal dynamics of such transformation and the underlying mechanism remain underexplored.
 Towards a deeper understanding of this framework, we propose and empirically validate **The Transfer Neurons Hypothesis**: certain neurons in the MLP module are responsible for transferring representations between language-specific latent spaces and a shared semantic latent space.
 Furthermore, we show that one function of language-specific neurons, as identified in recent studies, is to facilitate movement between latent spaces.
