@@ -2,9 +2,11 @@ from collections import defaultdict
 import os
 import pickle
 import random
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 from baukit import TraceDict # baukit: https://github.com/davidbau/baukit
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
 import torch
@@ -165,6 +167,83 @@ def get_hidden_states_including_emb_layer(model, tokenizer, device, data, lang) 
 
     return hidden_states
 
+def take_hs_similarities_with_edit_activation(model, tokenizer, device: str, neurons: List[Tuple[int, int]], data: List[str]) -> Dict[int, List[float]]:
+    trace_layers = list(set([f'model.layers.{layer}.mlp.act_fn' for layer, _ in neurons]))
+    similarities = defaultdict(list)
+
+    for L1_txt, L2_txt in tqdm(data, total=len(data), desc=f'Taking hs similarities for sentence pairs ...'):
+        # get L2 hs (with intervention).
+        with TraceDict(model, trace_layers, edit_output=lambda output, layer: edit_activation(output, layer, neurons)):
+            inputs_L2 = tokenizer(L2_txt, return_tensors='pt').to(device)
+            with torch.no_grad():
+                output_L2 = model(**inputs_L2, output_hidden_states=True)
+            last_token_index_L2 = inputs_L2['input_ids'].shape[1] - 1
+            last_token_hidden_states_L2 = [
+                layer_hidden_state[:, last_token_index_L2, :].detach().cpu().numpy()
+                for layer_hidden_state in output_L2.hidden_states[1:]
+            ]
+
+        # get L1 hs (without intervention).
+        inputs_L1 = tokenizer(L1_txt, return_tensors='pt').to(device)
+        with torch.no_grad():
+            output_L1 = model(**inputs_L1, output_hidden_states=True)
+        last_token_index_L1 = inputs_L1['input_ids'].shape[1] - 1
+        last_token_hidden_states_L1 = [
+            layer_hidden_state[:, last_token_index_L1, :].detach().cpu().numpy()
+            for layer_hidden_state in output_L1.hidden_states[1:]
+        ]
+
+        # cos_sim for the current sentence pair.
+        similarities = calc_cosine_sim(last_token_hidden_states_L1, last_token_hidden_states_L2, similarities)
+
+    return similarities
+
+def calc_cosine_sim(last_token_hidden_states_L1: List[np.ndarray], last_token_hidden_states_L2: List[np.ndarray], similarities: Dict[int, List[float]]) -> Dict[int, List[float]]:
+    for layer_idx, (hidden_state_L1, hidden_state_L2) in enumerate(zip(last_token_hidden_states_L1, last_token_hidden_states_L2)):
+        sim = cosine_similarity(hidden_state_L1, hidden_state_L2)[0, 0]
+        similarities[layer_idx].append(sim)
+
+    return similarities
+
+def plot_hs_sim_hist(dict_same_semantics: Dict[int, float], dict_diff_semantics: Dict[int, float], lang: str, save_path: str) -> None:
+    # convert keys and values into list
+    keys = np.array(list(dict_same_semantics.keys()))
+    values1 = list(dict_same_semantics.values())
+    values2 = list(dict_diff_semantics.values())
+
+    offset = 0.1
+
+    # plot hist
+    plt.rcParams["font.family"] = "DejaVu Serif"
+    plt.figure(figsize=(8, 7))
+    plt.bar(keys-offset, values1, alpha=1, label='same semantics')
+    plt.bar(keys+offset, values2, alpha=1, label='different semantics')
+
+    plt.xlabel('Layer index', fontsize=35)
+    plt.ylabel('Cosine Sim', fontsize=35)
+    plt.ylim(-0.5, 1)
+    plt.title(f'en-{lang}', fontsize=35)
+    plt.tick_params(axis='x', labelsize=20)
+    plt.tick_params(axis='y', labelsize=20)
+    plt.legend(fontsize=25)
+    plt.grid(True)
+    with PdfPages(save_path + '.pdf') as pdf:
+        pdf.savefig(bbox_inches='tight', pad_inches=0.01)
+        plt.close()
+
+def generate_baseline_neurons(transfer_neurons: List[Tuple[int, int]], layer_range: Tuple[int, int], neuron_range: Tuple[int, int]) -> List[Tuple[int, int]]:
+    a, b = layer_range
+    c, d = neuron_range
+    n = len(transfer_neurons)
+    
+    all_candidates = [(l_idx, n_idx) for l_idx in range(a, b) for n_idx in range(c, d)]
+
+    available = list(set(all_candidates) - set(transfer_neurons))
+    
+    # select random n.
+    baseline = random.sample(available, n)
+    return baseline
+    
 def save_as_pickle(file_path: str, target_dict) -> None:
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     temp_path = file_path + '.tmp'
