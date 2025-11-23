@@ -30,8 +30,8 @@ pip install -r requirements.txt
 ### Sentence Dataset Requirements
 - L1: fixed to English (We assume English latent space serves as a shared semantic latent space in middle layers).
 - L2: language you want to detect as transfer neurons (in the paper, we detected TNs for ja/nl/ko/it).
-- For Type-1 neurons detection: sentences must be a list of parallels pairs(tuple) of english-L2: ```[(L1_sentence1, parallel_sentence_in_L2), (L1_sentence2, parallel_sentence_in_L2), ...]```
-- For Type-2 neurons detection: sentence must be a list of L2 sentences: ```[L2_sentence1, L2_sentence2, L2_sentence3, ...]```
+- For Type-1 neurons detection: data must be a list of parallel sentence pairs(tuple) of english-L2: ```[(L1_sentence1, parallel_sentence_in_L2), (L1_sentence2, parallel_sentence_in_L2), ...]```
+- For Type-2 neurons detection: data must be a list of L2 sentences: ```[L2_sentence1, L2_sentence2, L2_sentence3, ...]```
 
 You can use any sentence datasets as long as the datasets meet the conditions above.  
 (In the paper, we used [tatoeba](https://huggingface.co/datasets/Helsinki-NLP/tatoeba) corpus.)
@@ -77,7 +77,7 @@ python -m tn.detect_tn \
     --centroids_path path/to/your/centroids_for_type2_detection_ja.pkl \
     --sentence_path path/to/your/monolingual_sentences_ja.pkl
 ```
-As a distance function, you may choose either ```cos_sim``` (Cosine similarity) or ```L2_dis``` (Euclidean distance). In the paper, we adopted ```cos_sim```.
+ In the paper, we adopted ```cos_sim``` as a distance function.
 
 **Notes:** In our paper, we used LLMs consisting of 32 decoder layers. Accordingly, we set the candidate layers to 1–20 for identifying Type-1 neurons and 21–32 for identifying Type-2 neurons.
 If you use an LLM with a different number of layers, please adjust the candidate layer range as appropriate by modifying ```candidate_layers_range = 20 if tn_type == 'type1' else 32``` and ```if tn_type == 'type2': neuron_ranking = [neuron for neuron in neuron_ranking if neuron[0] in [ _ for _ in range(20, 32)]]``` in the ```tn/detect_tn.py``` file.
