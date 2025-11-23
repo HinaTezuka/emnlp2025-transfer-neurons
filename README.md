@@ -77,7 +77,7 @@ python -m tn.detect_tn \
     --centroids_path path/to/your/centroids_for_type2_detection_ja.pkl \
     --sentence_path path/to/your/monolingual_sentences_ja.pkl
 ```
- In the paper, we adopted ```cos_sim``` as a distance function.
+ In the paper, we adopted ```cos_sim``` (cosine similarity) as a distance function.
 
 **Notes:** In our paper, we used LLMs consisting of 32 decoder layers. Accordingly, we set the candidate layers to 1–20 for identifying Type-1 neurons and 21–32 for identifying Type-2 neurons.
 If you use an LLM with a different number of layers, please adjust the candidate layer range as appropriate by modifying ```candidate_layers_range = 20 if tn_type == 'type1' else 32``` and ```if tn_type == 'type2': neuron_ranking = [neuron for neuron in neuron_ranking if neuron[0] in [ _ for _ in range(20, 32)]]``` in the ```tn/detect_tn.py``` file.
