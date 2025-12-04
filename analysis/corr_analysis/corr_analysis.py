@@ -31,7 +31,7 @@ if __name__ == '__main__':
     python -m analysis.corr_analysis.corr_analysis \
         --activations_arr_path data/inner_reps/activations_for_corr_analysis.npz \
         --langs ja nl ko it \
-        --top-n 1000
+        --top_n 1000
     """
 
     activations_arr_path = args.activations_arr_path
