@@ -88,7 +88,7 @@ for layer_i in range(33): # 33: emb layer + 32 decoder layers.
     cbar.ax.tick_params(labelsize=20)
     plt.title(f"Layer {layer_i}", fontsize=30)
     plt.tick_params(labelsize=30)
-    if intervention_type == 'type-1':
+    if intervention_type == 'type1':
         for label in ax.get_xticklabels():
             if label.get_text() == 'en':
                 label.set_color('red')
