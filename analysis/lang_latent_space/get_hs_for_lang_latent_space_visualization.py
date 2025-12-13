@@ -1,7 +1,6 @@
 import argparse
 
 import numpy as np
-from sklearn.decomposition import PCA
 import torch
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -55,7 +54,7 @@ if __name__ == '__main__':
             raise ValueError(f'Unknown intervention_type: {intervention_type}')
         
         # save.
-        path = f'data/inner_reps/hs_for_lang_latent/{intervention_type}_{lang}.npz'
+        path = f'data/inner_reps/hs_for_lang_latent/{"normal" if intervention_type == "w/o" else intervention_type}_{lang}.npz'
         save_np_arrays(path, hs_array)
 
         print(f'{lang} completed.')
