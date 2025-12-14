@@ -106,7 +106,7 @@ for layer_i in range(33): # 33: emb layer + 32 decoder layers.
     elif intervention_type == 'type1':
         save_dir = f''
     elif intervention_type == 'type2':
-        save_dir = f'analysis/lang_latent_space/test_figs'
+        save_dir = f''
 
     os.makedirs(save_dir, exist_ok=True)
     if layer_i == 0:
