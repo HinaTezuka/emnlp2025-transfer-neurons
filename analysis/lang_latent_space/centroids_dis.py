@@ -101,7 +101,7 @@ for layer_i in range(33): # 33: emb layer + 32 decoder layers.
                 label.set_fontsize(40)
 
     # set this path (save_dir) properly.
-    if intervention_type == 'w/o':
+    if intervention_type == 'normal':
         save_dir = f''
     elif intervention_type == 'type1':
         save_dir = f''
