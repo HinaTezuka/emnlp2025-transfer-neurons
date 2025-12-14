@@ -21,7 +21,7 @@ hs_ko = unfreeze_np_arrays(f'data/inner_reps/hs_for_lang_latent/{intervention_ty
 hs_it = unfreeze_np_arrays(f'data/inner_reps/hs_for_lang_latent/{intervention_type}_it.npz')
 hs_en = unfreeze_np_arrays(f'data/inner_reps/hs_for_lang_latent/{intervention_type}_en.npz')
 
-sim_dict = sim_dict = defaultdict(lambda: defaultdict(lambda: np.float64(0)))
+sim_dict = defaultdict(lambda: defaultdict(lambda: np.float64(0)))
 
 for layer_i in range(33): # 33: emb layer + 32 decoder layers.
     if (intervention_type == 'type1' and layer_i in [ _ for _ in range(21, 33)]) or (intervention_type == 'type2' and layer_i in [ _ for _ in range(21)]):
