@@ -18,7 +18,6 @@ if __name__ == '__main__':
     parser.add_argument('--TN_Type', type=str, required=True, choices=['type1', 'type2'], help='Type of TN you want to detect.')
     parser.add_argument('--top_n', type=int, required=True, default=1000, help='top-n neurons from the score ranking.')
     parser.add_argument('--lang_for_TN', type=str, required=True, help='language you wan to detect as Transfer Neurons.')
-    parser.add_argument('--scoring_type', type=str, required=True, default='cos_sim', choices=['cos_sim', 'L2_dis'], help='scoring metric: either "cos_sim"(cosine similarity) or "L2_dis"(euclidean distance) can be accepted.')
     parser.add_argument('--centroids_path', type=str, required=True, help='path for the list of centroids (.pkl).')
     parser.add_argument('--sentence_path', type=str, required=True, help='sentences dataset path.')
     args = parser.parse_args()
@@ -27,7 +26,6 @@ if __name__ == '__main__':
     tn_type = args.TN_Type
     top_n = args.top_n
     L2 = args.lang_for_TN
-    score_type = args.scoring_type
     centroids_path = args.centroids_path
     sentence_path = args.sentence_path
 
@@ -54,7 +52,7 @@ if __name__ == '__main__':
     sentences = unfreeze_pickle(sentence_path) # must be: [sentence1, sentence2, ...].
 
     # run detection.
-    scores = compute_scores_for_tn_detection(model, tokenizer, device, sentences, candidates, centroids, score_type)
+    scores = compute_scores_for_tn_detection(model, tokenizer, device, sentences, candidates, centroids)
     neuron_ranking, score_dict = sort_neurons_by_score(scores)
     if tn_type == 'type2':
         neuron_ranking = [neuron for neuron in neuron_ranking if neuron[0] in [ _ for _ in range(20, 32)]]

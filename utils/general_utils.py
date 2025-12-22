@@ -8,7 +8,7 @@ from baukit import TraceDict # baukit: https://github.com/davidbau/baukit
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
+from sklearn.metrics.pairwise import cosine_similarity
 import torch
 from tqdm import tqdm
 
@@ -37,7 +37,7 @@ def get_inner_reps(model, prompt):
     
     return act_fn_values, up_proj_values, ATT_values, outputs
 
-def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_neurons, centroids, score_type):
+def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_neurons, centroids):
     num_candidate_layers = len(candidate_neurons.keys())
     num_neurons = model.config.intermediate_size
     scores_all_txt = np.zeros((num_candidate_layers, num_neurons, len(data))) # temp save array across all the input samples.
@@ -66,21 +66,14 @@ def compute_scores_for_tn_detection(model, tokenizer, device, data, candidate_ne
 
             # layer score at i-th layer.
             hs_before_mlp = (hs_pre + atts).reshape(1, -1) # H^l-1 + Att^l.
-            if score_type == 'L2_dis':
-                layer_score = euclidean_distances(hs_before_mlp, c)[0, 0]
-            elif score_type == 'cos_sim':
-                layer_score = cosine_similarity(hs_before_mlp, c)[0, 0]
+            layer_score = cosine_similarity(hs_before_mlp, c)[0, 0]
 
             neuron_indices = np.array(candidate_neurons[layer_idx])
             value_vectors = model.model.layers[layer_idx].mlp.down_proj.weight.T.data[neuron_indices].detach().cpu().numpy()
             # neuron scores at i-th layer.
             hs_with_neurons = (hs_pre + atts + (acts.reshape(-1, 1) * value_vectors)) # H^l-1 + Att^l + av (a: activation value, v: correnponding value vector). 
-            if score_type == 'L2_dis':
-                neuron_scores = euclidean_distances(hs_with_neurons, c).reshape(-1)
-                neuron_scores = np.where(neuron_scores <= layer_score, abs(layer_score - neuron_scores), -abs(layer_score - neuron_scores))
-            elif score_type == 'cos_sim':
-                neuron_scores = cosine_similarity(hs_with_neurons, c).reshape(-1)
-                neuron_scores = np.where(neuron_scores >= layer_score, abs(layer_score - neuron_scores), -abs(layer_score - neuron_scores))
+            neuron_scores = cosine_similarity(hs_with_neurons, c).reshape(-1)
+            neuron_scores = np.where(neuron_scores >= layer_score, abs(layer_score - neuron_scores), -abs(layer_score - neuron_scores))
             scores_all_txt[layer_idx, :, text_idx] = neuron_scores
 
     # final scores (mean scores for all the input samples).
