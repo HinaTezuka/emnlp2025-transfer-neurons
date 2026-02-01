@@ -256,7 +256,7 @@ def take_activation_similarities_with_edit_activation(model, tokenizer, device, 
         current_pair_idx = pair_idx
 
         """ collect MLP activations for L1 text (w/o any intervention). """
-        input_ids_L1 = tokenizer(L1_text, return_tensors="pt").input_ids.to(device)
+        input_ids_L1 = tokenizer(L1_text, return_tensors='pt').input_ids.to(device)
         handles = []
         for layer_idx, layer in enumerate(model.model.layers):
             handle = layer.mlp.down_proj.register_forward_pre_hook(activation_extractor(layer_idx=layer_idx, L1_or_L2='L1'))
@@ -269,7 +269,7 @@ def take_activation_similarities_with_edit_activation(model, tokenizer, device, 
             handle.remove()
         
         """ collect MLP activations for L2 text (w/ top-n Type-1 neurons or random n. neurons intervention). """
-        input_ids_L2 = tokenizer(L2_text, return_tensors="pt").input_ids.to(device)
+        input_ids_L2 = tokenizer(L2_text, return_tensors='pt').input_ids.to(device)
         handles = []
         for layer_idx, layer in enumerate(model.model.layers):
             handle = layer.mlp.down_proj.register_forward_pre_hook(activation_extractor(layer_idx=layer_idx, L1_or_L2='L2'))
