@@ -1,8 +1,7 @@
 """
 hidden states similarity under the following settings:
     (a): top-n Type-1 neuorns intervention.
-    (b): top-n Type-2 neurons intervention.
-    (c): baseline (random n. neurons from the same layers as transfer neurons) intervention.
+    (b): baseline (random n. neurons from the same layers as transfer neurons) intervention.
 """
 import argparse
 
