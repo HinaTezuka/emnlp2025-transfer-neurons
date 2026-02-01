@@ -224,6 +224,111 @@ def plot_hs_sim_hist(dict_same_semantics: Dict[int, float], dict_diff_semantics:
         pdf.savefig(bbox_inches='tight', pad_inches=0.01)
         plt.close()
 
+# activations sim.
+def take_activation_similarities_with_edit_activation(model, tokenizer, device, layer_neuron_list, data):
+    num_layers = model.config.num_hidden_layers
+    num_neurons = model.config.intermediate_size
+    act_patterns_dict = defaultdict(list) # dict for saving activations similarity between L1 and L2.
+    act_patterns_en = np.zeros((num_layers, len(data), num_neurons))
+    act_patterns_L2 = np.zeros((num_layers, len(data), num_neurons))
+    trace_layers = list(set([f'model.layers.{layer}.mlp.act_fn' for layer, _ in layer_neuron_list]))
+    current_pair_idx = None
+
+    def activation_extractor(layer_idx: int, L1_or_L2: str):
+        def hook(m, inp):
+            if isinstance(inp, tuple):
+                if L1_or_L2 == 'L1':
+                    act_patterns_en[layer_idx, current_pair_idx, :] = inp[0][0, -1, :].detach().cpu().numpy()
+                elif L1_or_L2 == 'L2':
+                    act_patterns_L2[layer_idx, current_pair_idx, :] = inp[0][0, -1, :].detach().cpu().numpy()
+            else:
+                if L1_or_L2 == 'L1':
+                    act_patterns_en[layer_idx, current_pair_idx, :] = inp[0, -1, :].detach().cpu().numpy()
+                elif L1_or_L2 == 'L2':
+                    act_patterns_L2[layer_idx, current_pair_idx, :] = inp[0, -1, :].detach().cpu().numpy()
+
+            return inp
+        
+        return hook
+
+    # Track MLP activations with text data.
+    for pair_idx, (L1_text, L2_text) in tqdm(enumerate(data), total=len(data), desc='Collecting activation patterns for parallel sentence pairs (w/ intervention for L2 sentences)...'):
+        current_pair_idx = pair_idx
+
+        """ collect MLP activations for L1 text (w/o any intervention). """
+        input_ids_L1 = tokenizer(L1_text, return_tensors="pt").input_ids.to(device)
+        handles = []
+        for layer_idx, layer in enumerate(model.model.layers):
+            handle = layer.mlp.down_proj.register_forward_pre_hook(activation_extractor(layer_idx=layer_idx, L1_or_L2='L1'))
+            handles.append(handle)
+                
+        with torch.no_grad():
+            _ = model(input_ids_L1)
+
+        for handle in handles:
+            handle.remove()
+        
+        """ collect MLP activations for L2 text (w/ top-n Type-1 neurons or random n. neurons intervention). """
+        input_ids_L2 = tokenizer(L2_text, return_tensors="pt").input_ids.to(device)
+        handles = []
+        for layer_idx, layer in enumerate(model.model.layers):
+            handle = layer.mlp.down_proj.register_forward_pre_hook(activation_extractor(layer_idx=layer_idx, L1_or_L2='L2'))
+            handles.append(handle)
+
+        with TraceDict(model, trace_layers, edit_output=lambda output, layer: edit_activation(output, layer, layer_neuron_list)) as tr:
+            with torch.no_grad():
+                _ = model(input_ids_L2)
+        
+        for handle in handles:
+            handle.remove()
+        
+        # calc activation sim.
+        for layer_idx in range(num_layers):
+            neurons_L1_values = act_patterns_en[layer_idx, current_pair_idx, :].reshape(1, -1)
+            neurons_L2_values = act_patterns_L2[layer_idx, current_pair_idx, :].reshape(1, -1)
+            sim = cosine_similarity(neurons_L1_values, neurons_L2_values)[0, 0]
+            act_patterns_dict[layer_idx].append(sim)
+    
+    return dict(act_patterns_dict)
+
+def lineplot_activation_sim(act_sim_dict_parallel: Dict[int, List[np.float32]], act_sim_dict_non_parallel: Dict[int, List[np.float32]], L2: str, save_path: str):
+    all_layer_idxs = [ _ for _ in range(32)] # 32 decoder layers.
+
+    def compute_stats(data_dict, layers):
+        means, std_devs = [], []
+        for layer in layers:
+            values = data_dict.get(layer)
+            means.append(np.mean(values))
+            std_devs.append(np.std(values))
+        return np.array(means), np.array(std_devs)
+
+    means1, std_devs1 = compute_stats(act_sim_dict_parallel, all_layer_idxs) # parallel pairs.
+    means2, std_devs2 = compute_stats(act_sim_dict_non_parallel, all_layer_idxs) # non-parallel pairs.
+
+    plt.rcParams["font.family"] = "DejaVu Serif"
+    plt.figure(figsize=(8, 7))
+    
+    # Plot parallel sim.
+    plt.plot(all_layer_idxs, means1, marker='o', linestyle='-', color='blue', label="Same Semantics")
+    plt.fill_between(all_layer_idxs, means1 - std_devs1, means1 + std_devs1, color='blue', alpha=0.2)
+
+    # Plot non-parallel sim.
+    plt.plot(all_layer_idxs, means2, marker='s', linestyle='--', color='red', label="Different Semantics")
+    plt.fill_between(all_layer_idxs, means2 - std_devs2, means2 + std_devs2, color='red', alpha=0.2)
+
+    plt.xlabel("Layer Index", fontsize=35)
+    plt.ylabel("Cosine Sim", fontsize=35)
+    plt.ylim(-0.1, 1)
+    plt.tick_params(axis='x', labelsize=20)
+    plt.tick_params(axis='y', labelsize=20)
+    plt.title(f"en_{L2}", fontsize=35)
+    plt.legend(fontsize=20)
+    plt.grid(True)
+
+    with PdfPages(save_path + '.pdf') as pdf:
+        pdf.savefig(bbox_inches='tight', pad_inches=0.01)
+        plt.close()
+
 def generate_baseline_neurons(transfer_neurons: List[Tuple[int, int]], layer_range: Tuple[int, int], neuron_range: Tuple[int, int]) -> List[Tuple[int, int]]:
     a, b = layer_range
     c, d = neuron_range
