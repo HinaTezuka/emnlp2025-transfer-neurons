@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument('--L2_language', type=str, required=True, default='ja', help='L2 Language (English-L2 sentence pair). This must be compatible with the language of transfer neruons you want to deactivate.')
     parser.add_argument('--parallel_sentences_path', type=str, required=True, default='data/example_sentences/ja_parallel_test.pkl', help='Path to parallel sentence pairs(in the paper, we sampled 1k english-L2 parallel sentence pairs from tatoeba curpus).')
     parser.add_argument('--non_parallel_sentences_path', type=str, required=True, default='data/example_sentences/ja_non_parallel.pkl', help='Path to non-parallel sentence pairs(in the paper, we sampled 1k english-L2 non-parallel sentence pairs from tatoeba curpus).')
-    parser.add_argument('--intervention_type', type=str, required=True, choices=['type1', 'type2'], help='Without any intervention (normal forward path), top-n Type1 neurons intervention or top-n Type2 neurons intervention.')
+    parser.add_argument('--intervention_type', type=str, default='type1', help='Without any intervention (normal forward path), top-n Type1 neurons intervention.')
     parser.add_argument('--tn_path', type=str, required=True, help='Path to a list of top-n transfer neurons ([(layer_idx, neuron_idx), (layer_idx, neuron_idx), ...]) that you want to deactivate.')
     parser.add_argument('--save_path_intervention', type=str, required=True, help='Path to save transfer neurons intervention result.')
     parser.add_argument('--save_path_baseline', type=str, required=True, help='Path to save baseline neurons intervention result.')
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # unfreeze neurons.
     neurons = unfreeze_pickle(tn_path)
     # make baseline neurons.
-    layer_range = (0, 20) if intervention_type == 'type1' else (20, 32)
+    layer_range = (0, 20) # Type-1 neurons range.
     neuron_range = (0, model.config.intermediate_size)
     random_neurons = generate_baseline_neurons(neurons, layer_range, neuron_range)
 
