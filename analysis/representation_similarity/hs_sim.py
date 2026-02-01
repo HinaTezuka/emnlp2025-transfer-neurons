@@ -4,7 +4,6 @@ hidden states similarity under the following settings:
     (b): baseline (random n. neurons from the same layers as transfer neurons) intervention.
 """
 import argparse
-import random
 
 import numpy as np
 import torch
@@ -69,7 +68,6 @@ if __name__ == "__main__":
     # make baseline neurons.
     layer_range = (0, 20) # Type-1 neurons range.
     neuron_range = (0, model.config.intermediate_size)
-    random.seed(42)
     random_neurons = generate_baseline_neurons(neurons, layer_range, neuron_range)
 
     # hs similarity with top-n transfer neurons deactivated.
