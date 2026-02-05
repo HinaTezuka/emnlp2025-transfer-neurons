@@ -6,8 +6,55 @@ __pycache__/
 # C extensions
 *.so
 
+# test folder to store tn.
+data/tn
+
 # example data generator.
 s.py
+
+# .sh files for test execution.
+test_scripts
+
+# test figs.
+test_figs
+
+# tn check.
+tn_check.py
+tn_check_type1.py
+tn_check_type2_reimpl.py
+
+# test qa.
+analysis/qa/test_output
+
+# test venv.
+test_venv
+uv_venv_作り方.txt
+
+# baukit TraceDict / register_forward_hook が完全一致するかをQAでテスト（結果、完全一致）.
+analysis/qa/test.py
+analysis/qa/test2.py
+analysis/qa/test3.py
+analysis/qa/greedy_check.py
+
+# mmlu-prox test.
+analysis/reasoning/res_float16
+analysis/reasoning/res_float32
+
+# zero-out test for intervention in mmlu-prox.
+analysis/reasoning/steer_configs/ja_TEST_ZERO_OUT_FOR_FIRST_3_DIMS.pt
+
+# トークン数1の文カウンター.
+check_one_token_prompts.py
+
+# 
+analysis/representation_similarity/hs_sim_last_n_tatoeba_sample_test.py
+analysis/representation_similarity/act_sim_last_n_tatoeba_sample_test.py
+
+#
+type2_re_implementation/check_centroids_between_original_and_new.py
+
+# 
+type2_re_implementation/type2_hs_test.py
 
 # Distribution / packaging
 .Python
