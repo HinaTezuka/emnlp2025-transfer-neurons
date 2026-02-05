@@ -61,3 +61,5 @@ if __name__ == '__main__':
     # save as pkl.
     sorted_neurons_path = f'data/tn/{L2}_{tn_type}_top{top_n}.pkl'
     save_as_pickle(sorted_neurons_path, top_transfer_neurons)
+    score_dict_path = f'data/tn/{L2}_{tn_type}_top{top_n}_score_dict.pkl'
+    save_as_pickle(score_dict_path, score_dict)
