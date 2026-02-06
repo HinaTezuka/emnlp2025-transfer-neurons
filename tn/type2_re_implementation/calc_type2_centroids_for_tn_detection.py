@@ -62,7 +62,7 @@ example usage:
 python -m tn.calc_type2_centroids_for_tn_detection \
     --model_id meta-llama/Meta-Llama-3-8B \
     --lang_for_TN ja \
-    --sentence_path path/to/your/parallel_sentences_ja.pkl
+    --sentence_path path/to/your/monolingual_sentences_ja.pkl
 """
 
 if __name__ == '__main__':
