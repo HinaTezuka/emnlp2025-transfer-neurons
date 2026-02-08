@@ -56,7 +56,7 @@ def get_centroid(hidden_states: np.ndarray) -> List[np.ndarray]:
     return centroids
 
 """
-Revised version of centroids estimation code for detecting Type-2 neurons.
+Ablated version of centroids estimation code for detecting Type-2 neurons.
 
 example usage:
 python -m tn.calc_type2_centroids_for_tn_detection \
