@@ -1,0 +1,13 @@
+1. git clone --depth 1 https://github.com/EleutherAI/lm-evaluation-harness (at analysis/reasoning dir.)
+
+2. uv venv --python 3.10 venv_for_eval_harness   <- uvでharness用の仮想環境（venv）を作成(at analysis/reasoning dir.).
+
+3. source venv_for_eval_harness/bin/activate
+
+4. cd lm-evaluation-harness
+
+5. uv pip install -e . (or uv pip install -r venv_for_eval_harness_requirements.txt)
+
+6. uv pip install torch torchvision <- steer_configを作るとき（analysis/reasoning/make_steer_config.py を実行する時に必要）
+
+7. uv pip install "lm_eval[hf]" / uv pip install "lm_eval[vllm]" (READMEに従って.)
