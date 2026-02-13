@@ -133,8 +133,6 @@ def mkqa_all(model: AutoModelForCausalLM, tokenizer: AutoTokenizer, device: str,
         seen = set()
         a = [ans for ans in a if ans and not (ans in seen or seen.add(ans))]
             
-        ans_type = sample['answers']['en'][0]['type']
-
         # make prompt.
         if L2 == 'ja': prompt = f'{q}? 答え: '
         elif L2 == 'nl': prompt = f'{q}? Antwoord: '
