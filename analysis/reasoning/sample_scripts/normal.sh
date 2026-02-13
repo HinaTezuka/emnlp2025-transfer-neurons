@@ -11,5 +11,3 @@ python -m lm_eval \
     --batch_size auto \
     --tasks mmlu_prox_${lang} \
     --device cuda:0 \
-    --log_samples \
-    --output_path results/outputs/${model_type}_${lang}_without_any_intervention.jsonl

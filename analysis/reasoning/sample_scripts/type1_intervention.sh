@@ -14,7 +14,5 @@ python -m lm_eval \
     --tasks mmlu_prox_${lang} \
     --device cuda:0 \
     --batch_size auto \
-    --log_samples \
-    --output_path results/outputs/${model_type}_${lang}.jsonl
 
 deactivate
