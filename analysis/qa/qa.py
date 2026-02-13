@@ -152,7 +152,7 @@ def mkqa_all(model: AutoModelForCausalLM, tokenizer: AutoTokenizer, device: str,
         # extract generated sequence.
         pre = tokenizer.decode(output[0, input_len:], skip_special_tokens=True)
         
-        # f1, em
+        # f1
         f1_l = []
         for ans in a:
             f1_l.append(calculate_f1(pre, ans, L2))
