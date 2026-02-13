@@ -59,6 +59,7 @@ type2_re_implementation/type2_hs_test.py
 
 # 
 analysis/reasoning/results
+analysis/reasoning/steer_configs
 
 # Distribution / packaging
 .Python
