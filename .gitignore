@@ -22,6 +22,7 @@ test_figs
 tn_check.py
 tn_check_type1.py
 tn_check_type2_reimpl.py
+testtest_reps.py
 
 # test qa.
 analysis/qa/test_output
@@ -55,6 +56,9 @@ type2_re_implementation/check_centroids_between_original_and_new.py
 
 # 
 type2_re_implementation/type2_hs_test.py
+
+# 
+analysis/reasoning/results
 
 # Distribution / packaging
 .Python
