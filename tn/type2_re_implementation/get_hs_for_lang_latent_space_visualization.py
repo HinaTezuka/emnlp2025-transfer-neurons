@@ -26,12 +26,12 @@ if __name__ == '__main__':
     In the paper, we used parallel question sentences in MKQA dataset for language latent spaces visualization (1k sentence per language).
 
     example usage:
-    python -m type2_re_implementation.get_hs_for_lang_latent_space_visualization \
+    python -m tn.type2_re_implementation.get_hs_for_lang_latent_space_visualization \
         --model_id meta-llama/Meta-Llama-3-8B \
         --intervention_type type2 \
         --languages ja nl ko it en \
 
-    python -m type2_re_implementation.get_hs_for_lang_latent_space_visualization \
+    python -m tn.type2_re_implementation.get_hs_for_lang_latent_space_visualization \
         --model_id mistralai/Mistral-7B-v0.3 \
         --intervention_type type2 \
         --languages ja nl ko it en \
