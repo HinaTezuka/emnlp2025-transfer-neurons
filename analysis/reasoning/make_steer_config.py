@@ -62,7 +62,7 @@ if __name__ == "__main__":
     for L2 in langs:
         # get type-1 neurons.
         type1_path = f'' # your top-n Type-1 neurons path
-        type1_neurons = unfreeze_pickle(type1_path)
+        type1_neurons = unfreeze_pickle(type1_path)[:intervention_num]
 
         # baseline.
         random.seed(42)
