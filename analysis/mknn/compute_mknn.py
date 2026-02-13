@@ -145,8 +145,7 @@ for L2 in langs:
     if intervention_type == 'w/o':
         res = compute_mutual_knn(model, tokenizer, device, sentences, topk=topk) # res: [mknn_score_layer1, mknn_score_layer2, ...]
     elif intervention_type == 'type1':
-        tn = unfreeze_pickle(f'path/to/top-n/type1/neurons')
-        tn = [ n for n in tn if n[0] in [_ for _ in range(25)]][:1000]
+        tn = unfreeze_pickle(f'path/to/top-n/type1/neurons')[:1000]
         res = compute_mutual_knn_with_edit_activation(model, tokenizer, device, sentences, topk, tn)
     knn_scores[L2] = res
 
