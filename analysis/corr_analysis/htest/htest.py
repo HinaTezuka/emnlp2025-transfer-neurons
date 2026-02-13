@@ -14,7 +14,7 @@ def welch_t_test(labels, values):
     group0 = values[labels == 0]
     group1 = values[labels == 1]
 
-    # Welch t test（equal_var=False -> 等分散を仮定しない）.
+    # Welch t test（equal_var=False: assuming unequal variances）.
     t_stat, p_value = ttest_ind(group0, group1, equal_var=False)
     
     eta_squared = compute_corr_ratio(labels, values)
