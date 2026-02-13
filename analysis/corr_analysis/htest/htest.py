@@ -82,7 +82,7 @@ def main(args):
     p_list = []
     top_n = 1000 # top-1k neurons.
     for layer_i, neuron_i in neurons[:top_n]:
-        vals = activations_arr[layer_i, neuron_i, :].astype(np.float64)
+        vals = activations_arr[layer_i, neuron_i, :]
         eta, _, p_val = compute_eta_squared_and_f(labels_list, vals) # ANOVA.
         # eta, _, p_cal = welch_t_test(labels_list, vals) # Welch t test.
         eta_list.append(eta)

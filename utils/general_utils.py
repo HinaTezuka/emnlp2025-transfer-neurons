@@ -94,7 +94,7 @@ def sort_neurons_by_score(final_scores):
     return sorted_neurons, score_dict
 
 def track_activations_with_text_data(model, tokenizer, device, data):
-    activations_array = np.zeros((model.config.num_hidden_layers, model.config.intermediate_size, len(data)), dtype=np.float16)
+    activations_array = np.zeros((model.config.num_hidden_layers, model.config.intermediate_size, len(data)))
     current_text_idx = None
 
     def activation_extractor(model, input, layer_idx: int):

@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
             corr_ratios = []
             for layer_idx, neuron_idx in neurons[:top_n]:
-                corr_ratio_score = compute_corr_ratio(labels_list, activations_arr[layer_idx, neuron_idx, :].astype(np.float64))
+                corr_ratio_score = compute_corr_ratio(labels_list, activations_arr[layer_idx, neuron_idx, :])
                 corr_ratios.append(corr_ratio_score)
             mean_corr_ratio_top_n = np.mean(np.asarray(corr_ratios))
 
