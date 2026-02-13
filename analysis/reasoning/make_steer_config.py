@@ -58,10 +58,7 @@ if __name__ == "__main__":
     intervention_num = 1000
     action_type = 'multiply' # we only consider "multiply" steering.
     
-    # あとで消す.
-    model_type_for_test = 'aya'
-    
-    neuron_num = 14336
+    neuron_num = 14336 # model.config.intermediate_size.
     for L2 in langs:
         # get type-1 neurons.
         type1_path = f'' # your top-n Type-1 neurons path
