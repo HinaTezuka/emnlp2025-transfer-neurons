@@ -1,3 +1,5 @@
+cd analysis/reasoning
+
 export CUDA_VISIBLE_DEVICES=0
 export model_id="model_id/at/huggingface_hub"
 export model_type="model_nickname"
