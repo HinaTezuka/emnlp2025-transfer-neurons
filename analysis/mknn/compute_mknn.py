@@ -15,7 +15,7 @@ from utils.general_utils import (
 )
 
 """
-Funcs for compute mutual knn below (mutual_knn and compute_nearest_neighbors) are copied from: https://github.com/minyoungg/platonic-rep.
+Funcs for computing mutual knn below (mutual_knn and compute_nearest_neighbors) are copied from: https://github.com/minyoungg/platonic-rep.
 """
 
 def mutual_knn(feats_A, feats_B, topk=5):
