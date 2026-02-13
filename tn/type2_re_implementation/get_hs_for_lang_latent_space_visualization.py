@@ -5,8 +5,6 @@ from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from utils.general_utils import (
-    # get_hidden_states_including_emb_layer,
-    # get_hidden_states_including_emb_layer_with_edit_activation,
     unfreeze_pickle,
     save_np_arrays,
 )
