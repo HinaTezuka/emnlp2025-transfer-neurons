@@ -1,4 +1,6 @@
 cd analysis/reasoning
+source venv_for_eval_harness/bin/activate
+module load cuda/12.1
 
 export CUDA_VISIBLE_DEVICES=0 # single GPU.
 export model_id="model_id/at/huggingface_hub"
