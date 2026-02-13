@@ -1,6 +1,6 @@
 ## Revision of Tabs. 13, 14, 15, and 16 in the paper.
 
-Tables 13–16 in the paper were intended to present the ANOVA results comparing the activations of the top-1k transfer neurons (both Type-1 and Type-2) under the **language-specificity label** setting. However, we mistakenly reported the results obtained under the language-family specificity setting in these tables, which caused Tables 13–16 (intended for language specificity) and Tables 17–20 to contain identical values. Therefore, we provide here the correct results computed under the language-specificity label setting.
+Tables 13–16 in the paper were intended to present the ANOVA results comparing the activations of the top-1k transfer neurons (both Type-1 and Type-2) under the **language-specificity label** setting. However, we mistakenly reported the results obtained under the language-family specificity setting in these tables, which caused Tables 13–16 (intended for language specificity) and Tables 17–20 (intended for language-family specificity) to contain identical values. Therefore, we provide here the correct results computed under the language-specificity label setting.
 
 
 Table 13: % of Type-1 Transfer Neurons with correlation ratio > 0.1 and p < 0.05
