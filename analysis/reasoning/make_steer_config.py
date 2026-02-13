@@ -64,12 +64,8 @@ if __name__ == "__main__":
     neuron_num = 14336
     for L2 in langs:
         # get type-1 neurons.
-        # type1_path = f'' # your top-n Type-1 neurons path
-        # type1_neurons = unfreeze_pickle(type1_path)
-
-        # あとで消す.
-        type1_path = f"/home/s2410121/proj_LA/activated_neuron/new_neurons/pickles/transfer_neurons/{model_type_for_test}/final_scores/cos_sim/{L2}_mono_train.pkl"
-        type1_neurons = unfreeze_pickle(type1_path)[:1000]
+        type1_path = f'' # your top-n Type-1 neurons path
+        type1_neurons = unfreeze_pickle(type1_path)
 
         # baseline.
         random.seed(42)
@@ -90,71 +86,10 @@ if __name__ == "__main__":
             clamp_value=0.0
         )
 
-        # save.
+        # save (make analysis/reasoning/steer_configs directory beforehand).
         output_path = f'analysis/reasoning/steer_configs/{L2}.pt'
         output_path_baseline = f'analysis/reasoning/steer_configs/{L2}_baseline.pt'
         torch.save(config, output_path)
         print(f'Saved steer_config to: {output_path}')
         torch.save(config_baseline, output_path_baseline)
         print(f'Saved steer_config to: {output_path}')
-
-
-""" ZERO-OUT test 用 """
-# if __name__ == "__main__":
-#     """
-#     usage: python analysis/reasoning/make_steer_config.py
-#     """
-
-#     langs = ['ja', 'ko', 'it']
-#     # langs = ['ja', 'ko', 'fr']
-#     intervention_num = 1000
-#     action_type = 'multiply' # we only consider "multiply" steering.
-    
-#     # あとで消す.
-#     model_type_for_test = 'aya'
-    
-#     neuron_num = 14336
-#     for L2 in langs:
-#         # get type-1 neurons.
-#         # type1_path = f'' # your top-n Type-1 neurons path
-#         # type1_neurons = unfreeze_pickle(type1_path)
-
-#         # あとで消す.
-#         type1_path = f"/home/s2410121/proj_LA/activated_neuron/new_neurons/pickles/transfer_neurons/{model_type_for_test}/final_scores/cos_sim/{L2}_mono_train.pkl"
-#         type1_neurons = unfreeze_pickle(type1_path)[:1000]
-        
-#         for layer in range(32):
-#             type1_neurons.append((layer, 0))
-#             type1_neurons.append((layer, 1))
-#             type1_neurons.append((layer, 2))
-#             type1_neurons.append((layer, 14335))
-#             type1_neurons.append((layer, 14334))
-#             type1_neurons.append((layer, 14333))
-
-
-#         # # baseline.
-#         # random.seed(42)
-#         # random_neurons = generate_baseline_neurons(transfer_neurons=type1_neurons, layer_range=(0, 20), neuron_range=(0, neuron_num))
-
-#         # steer_config for top-n Type-1 neurons.
-#         config = make_steer_config(
-#             type1_neurons,
-#             hidden_size=neuron_num,
-#             action=action_type,
-#             clamp_value=0.0
-#         )
-#         # # steer_config for random n. baseline neurons.
-#         # config_baseline = make_steer_config(
-#         #     random_neurons, # baseline
-#         #     hidden_size=neuron_num,
-#         #     action=action_type,
-#         #     clamp_value=0.0
-#         # )
-
-#         # save.
-#         output_path = f'analysis/reasoning/steer_configs/{L2}_TEST_ZERO_OUT_FOR_FIRST_3_DIMS.pt'
-#         output_path_baseline = f'analysis/reasoning/steer_configs/{L2}_baseline.pt'
-#         torch.save(config, output_path)
-#         print(f'Saved steer_config to: {output_path}')
-#         # torch.save(config_baseline, output_path_baseline)
-#         # print(f'Saved steer_config to: {output_path}')
